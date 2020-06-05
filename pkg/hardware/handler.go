@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-crew/group/async"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"net"
@@ -22,12 +21,6 @@ const (
 var errChanClosed = errors.New("管道被关闭")
 
 type EventHandler func(*Event)
-
-// 业务抽象处理
-type Handler interface {
-	Process(ctx context.Context, gp *async.Async, conn *websocket.Conn)
-	BindEvents()
-}
 
 // 事件对象
 // {"event":"login", "timestamp": 1591254792, "data":"{}"}
@@ -48,6 +41,15 @@ type Response struct {
 type DataHandler struct {
 	DataCh chan []byte
 	Events map[string]EventHandler
+}
+
+// 应用对象
+type App struct {
+	Name string
+}
+
+func CreateApp(name string) *App {
+	return &App{Name: name}
 }
 
 // 从管道中读取信息

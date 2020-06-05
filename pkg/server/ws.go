@@ -2,14 +2,14 @@ package server
 
 import (
 	"context"
+	"github.com/king19800105/go-ws-demo/pkg/hardware"
+	"github.com/king19800105/go-ws-demo/pkg/hardware/factory"
+
 	// "context"
 	"fmt"
 	"github.com/go-crew/group/async"
-	"github.com/king19800105/go-ws-demo/pkg/hardware/instrument"
-
 	// "github.com/go-crew/group/async"
 	"github.com/gorilla/websocket"
-	handler "github.com/king19800105/go-ws-demo/pkg/hardware"
 	"net/http"
 )
 
@@ -23,10 +23,10 @@ const (
 )
 
 type Server struct {
-	addr    string
-	uri     string
-	upgrade *websocket.Upgrader
-	handler handler.Handler
+	addr     string
+	uri      string
+	upgrade  *websocket.Upgrader
+	hardware factory.Hardware
 }
 
 // 创建websocket服务对象
@@ -55,7 +55,7 @@ func NewServer(addr string, uri string) *Server {
 
 // 启动websocket服务
 // 每个连接都会触发一次全新的http.HandleFunc处理
-func (ws *Server) StartBy(hard string) (err error) {
+func (ws *Server) StartBy(app *hardware.App) (err error) {
 	http.HandleFunc(ws.uri, func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != ws.uri {
 			httpCode := http.StatusInternalServerError
@@ -76,24 +76,15 @@ func (ws *Server) StartBy(hard string) (err error) {
 			ctx = context.Background()
 		)
 
-		var hardware = createHandlerFactory(hard)
-		if nil == hardware {
+		var hw = factory.HardwareFactory(app.Name)
+		if nil == hw {
 			conn.Close()
 			return
 		}
 
-		hardware.BindEvents()
-		go hardware.Process(ctx, gp, conn)
+		hw.BindEvents()
+		go hw.Process(ctx, gp, conn)
 	})
 
 	return http.ListenAndServe(ws.addr, nil)
-}
-
-func createHandlerFactory(hard string) handler.Handler {
-	switch hard {
-	case "instrument":
-		return instrument.NewInstrument()
-	}
-
-	return nil
 }

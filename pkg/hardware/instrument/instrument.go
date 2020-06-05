@@ -69,3 +69,5 @@ func (s *Instrument) login(event *handler.Event) {
 		Data:    "{}",
 	})
 }
+
+// todo... 其他事件定义
