@@ -50,13 +50,13 @@ func (s *Instrument) Process(ctx context.Context, gp *async.Async, conn *websock
 // 事件绑定操作
 func (s *Instrument) BindEventListener() {
 	// 登入事件处理
-	s.on("login", func(event *hardware.Event) {
+	s.On("login", func(event *hardware.Event) {
 		s.login(event)
 	})
 }
 
 // 注册事件
-func (s *Instrument) on(evt string, action hardware.EventHandler) {
+func (s *Instrument) On(evt string, action hardware.EventHandler) {
 	s.Events[evt] = action
 }
 
