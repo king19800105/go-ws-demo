@@ -79,7 +79,7 @@ func (ws *Server) Start(app *hardware.App) (err error) {
 			return
 		}
 
-		hw.BindEvents()
+		hw.BindEventListener()
 		go hw.Process(ctx, gp, conn)
 	})
 

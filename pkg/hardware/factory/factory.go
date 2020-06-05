@@ -11,7 +11,7 @@ type (
 	// 硬件业务抽象
 	Hardware interface {
 		Process(ctx context.Context, gp *async.Async, conn *websocket.Conn)
-		BindEvents()
+		BindEventListener()
 	}
 
 	// todo... 其他业务抽象
