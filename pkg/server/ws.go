@@ -2,8 +2,12 @@ package server
 
 import (
 	"context"
+	// "context"
 	"fmt"
 	"github.com/go-crew/group/async"
+	"github.com/king19800105/go-ws-demo/pkg/hardware/instrument"
+
+	// "github.com/go-crew/group/async"
 	"github.com/gorilla/websocket"
 	handler "github.com/king19800105/go-ws-demo/pkg/hardware"
 	"net/http"
@@ -51,7 +55,7 @@ func NewServer(addr string, uri string) *Server {
 
 // 启动websocket服务
 // 每个连接都会触发一次全新的http.HandleFunc处理
-func (ws *Server) Start(handler handler.Handler) (err error) {
+func (ws *Server) StartBy(hard string) (err error) {
 	http.HandleFunc(ws.uri, func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != ws.uri {
 			httpCode := http.StatusInternalServerError
@@ -72,9 +76,24 @@ func (ws *Server) Start(handler handler.Handler) (err error) {
 			ctx = context.Background()
 		)
 
-		handler.BindEvents()
-		go handler.Process(ctx, gp, conn)
+		var hardware = createHandlerFactory(hard)
+		if nil == hardware {
+			conn.Close()
+			return
+		}
+
+		hardware.BindEvents()
+		go hardware.Process(ctx, gp, conn)
 	})
 
 	return http.ListenAndServe(ws.addr, nil)
+}
+
+func createHandlerFactory(hard string) handler.Handler {
+	switch hard {
+	case "instrument":
+		return instrument.NewInstrument()
+	}
+
+	return nil
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/king19800105/go-ws-demo/pkg/config"
-	"github.com/king19800105/go-ws-demo/pkg/hardware/instrument"
 	"github.com/king19800105/go-ws-demo/pkg/server"
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
@@ -13,6 +12,8 @@ import (
 	"os/signal"
 	"syscall"
 )
+
+const hardware = "instrument"
 
 const (
 	msgConfig    = "配置文件初始化失败"
@@ -42,14 +43,12 @@ func run() (err error) {
 		}
 	}
 
-	// 设备对象
-	var ins = instrument.NewInstrument()
 	var errCh = make(chan error)
 	// 创建服务
 	srv := server.NewServer(cfg.GetString("http"), cfg.GetString("app.route"))
 	// 启动服务
 	go func(errCh chan error) {
-		errCh <- srv.Start(ins)
+		errCh <- srv.StartBy(hardware)
 	}(errCh)
 	// 监听中断
 	go func(errCh chan error) {
