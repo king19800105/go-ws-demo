@@ -18,7 +18,7 @@ const appName = "instrument"
 
 const (
 	msgConfig    = "配置文件初始化失败"
-	msgServer    = "插座服务（socket）结束 : %v"
+	msgServer    = "设备仪器服务（instrument）结束 : %v"
 	msgInterrupt = "信号量中断，%s"
 )
 
