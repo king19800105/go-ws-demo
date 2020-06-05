@@ -2,14 +2,11 @@ package server
 
 import (
 	"context"
-	"github.com/king19800105/go-ws-demo/pkg/hardware"
-	"github.com/king19800105/go-ws-demo/pkg/hardware/factory"
-
-	// "context"
 	"fmt"
 	"github.com/go-crew/group/async"
-	// "github.com/go-crew/group/async"
 	"github.com/gorilla/websocket"
+	"github.com/king19800105/go-ws-demo/pkg/hardware"
+	"github.com/king19800105/go-ws-demo/pkg/hardware/factory"
 	"net/http"
 )
 
