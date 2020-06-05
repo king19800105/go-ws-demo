@@ -1,0 +1,78 @@
+<!--
+测试数据： {"event":"login", "timestamp": 1591254792, "data":"{}"}
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      window.addEventListener('load', function (evt) {
+        var output = document.getElementById('output');
+        var input = document.getElementById('input');
+        var ws;
+        var print = function (message) {
+          var d = document.createElement('div');
+          d.innerHTML = message;
+          output.appendChild(d);
+        };
+        document.getElementById('open').onclick = function (evt) {
+          if (ws) {
+            return false;
+          }
+          ws = new WebSocket('ws://127.0.0.1:9601/ws');
+          ws.onopen = function (evt) {
+            print('OPEN');
+          };
+          ws.onclose = function (evt) {
+            print(evt.reason);
+            ws = null;
+          };
+          ws.onmessage = function (evt) {
+            if (evt.data == 'heartbeat from server') {
+              console.log(evt.data);
+              return false;
+            }
+            print('RESPONSE: ' + evt.data);
+          };
+          ws.onerror = function (evt) {
+            print('ERROR: ' + evt.data);
+          };
+          return false;
+        };
+        document.getElementById('send').onclick = function (evt) {
+          if (!ws) {
+            return false;
+          }
+          print('SEND: ' + input.value);
+          ws.send(input.value);
+          return false;
+        };
+        document.getElementById('close').onclick = function (evt) {
+          print('CLOSE');
+          if (!ws) {
+            return false;
+          }
+          ws.close();
+          return false;
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td valign="top" width="50%">
+          <form>
+            <button id="open">连接</button>
+            <button id="close">关闭</button>
+            <input id="input" type="text" value="测试" />
+            <button id="send">发送</button>
+          </form>
+        </td>
+        <td valign="top" width="50%">
+          <div id="output"></div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -23,7 +23,7 @@ RUN go mod download
 # 将服务器的go工程代码加入到docker容器中
 ADD . ${PROJECT_PATH}
 # 运行编译
-RUN go build -a -o hardware cmd/hardware/main.go
+RUN go build -a -o hardware cmd/instrument/main.go
 # 开启端口
 EXPOSE 9601
 EXPOSE 9602
