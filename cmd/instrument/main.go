@@ -51,7 +51,7 @@ func run() (err error) {
 	srv := server.NewServer(cfg.GetString("http"), cfg.GetString("app.route"))
 	// 启动服务
 	go func(errCh chan error) {
-		errCh <- srv.StartBy(app)
+		errCh <- srv.Start(app)
 	}(errCh)
 	// 监听中断
 	go func(errCh chan error) {

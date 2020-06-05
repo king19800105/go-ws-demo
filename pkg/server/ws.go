@@ -52,7 +52,7 @@ func NewServer(addr string, uri string) *Server {
 
 // 启动websocket服务
 // 每个连接都会触发一次全新的http.HandleFunc处理
-func (ws *Server) StartBy(app *hardware.App) (err error) {
+func (ws *Server) Start(app *hardware.App) (err error) {
 	http.HandleFunc(ws.uri, func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != ws.uri {
 			httpCode := http.StatusInternalServerError
